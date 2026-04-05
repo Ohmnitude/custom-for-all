@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom For All — Web Design Studio</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-card-hover: #1a1a26;
+      --surface: #1c1c2b;
+      --accent: #6c5ce7;
+      --accent-light: #a29bfe;
+      --accent-glow: rgba(108, 92, 231, 0.25);
+      --text: #e8e8ef;
+      --text-muted: #8888a0;
+      --text-dim: #5a5a72;
+      --border: #2a2a3d;
+      --success: #00cec9;
+      --gold: #fdcb6e;
+      --radius: 12px;
+      --radius-lg: 20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── UTILITY ─── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+    .section-label {
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--accent-light);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+    }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-header .section-subtitle { margin: 0 auto; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: relative;
+      padding: 16px 0;
+    }
+    nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent-light); }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 24px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      background: var(--accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px var(--accent-glow);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover {
+      border-color: var(--accent-light);
+      color: var(--accent-light);
+    }
+    .btn-sm { padding: 10px 22px; font-size: 0.85rem; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; max-width: 720px; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+    .hero-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.08;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--accent-light), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    /* ─── PORTFOLIO CAROUSEL ─── */
+    .carousel-wrap {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .carousel-track {
+      position: relative;
+      height: 560px;
+      perspective: 1200px;
+    }
+
+    .carousel-slide {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 680px;
+      margin-left: -340px;
+      transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease;
+      cursor: pointer;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(300px) scale(0.7);
+      filter: brightness(0.4);
+      z-index: 1;
+    }
+    .carousel-slide.active {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+      filter: brightness(1);
+      z-index: 10;
+      pointer-events: auto;
+      cursor: default;
+    }
+    .carousel-slide.prev {
+      transform: translateX(-340px) scale(0.78);
+      opacity: 0.6;
+      filter: brightness(0.5);
+      z-index: 5;
+      pointer-events: auto;
+    }
+    .carousel-slide.next {
+      transform: translateX(340px) scale(0.78);
+      opacity: 0.6;
+      filter: brightness(0.5);
+      z-index: 5;
+      pointer-events: auto;
+    }
+    .carousel-slide.far-prev {
+      transform: translateX(-560px) scale(0.6);
+      opacity: 0.25;
+      filter: brightness(0.35);
+      z-index: 2;
+    }
+    .carousel-slide.far-next {
+      transform: translateX(560px) scale(0.6);
+      opacity: 0.25;
+      filter: brightness(0.35);
+      z-index: 2;
+    }
+
+    .browser-frame {
+      background: #1a1a26;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .carousel-slide.active .browser-frame {
+      box-shadow: 0 16px 60px rgba(108, 92, 231, 0.2), 0 8px 40px rgba(0,0,0,0.5);
+    }
+    .carousel-slide.active .browser-frame.is-exploring:hover {
+      border-color: var(--accent-light);
+      box-shadow:
+        0 16px 60px rgba(108, 92, 231, 0.24),
+        0 8px 40px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(162, 155, 254, 0.35);
+    }
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #15151f;
+      border-bottom: 1px solid var(--border);
+    }
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .browser-dot:nth-child(1) { background: #ff5f57; }
+    .browser-dot:nth-child(2) { background: #ffbd2e; }
+    .browser-dot:nth-child(3) { background: #28c840; }
+    .browser-back {
+      margin-left: 10px;
+      background: var(--surface);
+      border: none;
+      color: var(--text);
+      min-width: 32px;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, background 0.2s;
+    }
+    .browser-back:hover {
+      color: #fff;
+      background: var(--accent);
+    }
+    .browser-url {
+      flex: 1;
+      margin-left: 8px;
+      padding: 5px 12px;
+      background: var(--bg);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: monospace;
+    }
+    .browser-visit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      padding: 0 12px;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .browser-visit:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+    .browser-viewport {
+      height: 480px;
+      overflow: hidden;
+      position: relative;
+    }
+    .browser-viewport iframe {
+      width: 1280px;
+      height: 900px;
+      border: none;
+      transform: scale(0.531);
+      transform-origin: top left;
+      pointer-events: none;
+    }
+    .browser-viewport.exploring iframe {
+      pointer-events: auto;
+    }
+    .iframe-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 10, 15, 0);
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .carousel-wrap:not(.transitioning) .carousel-slide.active .iframe-overlay:hover {
+      background: rgba(10, 10, 15, 0.55);
+    }
+    .iframe-overlay .explore-label {
+      opacity: 0;
+      padding: 14px 32px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 50px;
+      transition: opacity 0.3s, transform 0.3s;
+      transform: translateY(6px);
+      box-shadow: 0 4px 24px var(--accent-glow);
+      pointer-events: none;
+    }
+    .carousel-wrap:not(.transitioning) .carousel-slide.active .iframe-overlay:hover .explore-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .browser-viewport.exploring .iframe-overlay {
+      display: none;
+    }
+
+    /* Active slide details (shown below the track) */
+    .carousel-details-area {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .portfolio-details {
+      display: none;
+      animation: detailFadeIn 0.4s ease;
+    }
+    .portfolio-details.active {
+      display: block;
+    }
+    @keyframes detailFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .portfolio-details h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .portfolio-details h3 a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .portfolio-details h3 a:hover { color: var(--accent-light); }
+    .portfolio-details p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .portfolio-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .portfolio-tags span {
+      padding: 5px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Carousel controls */
+    .carousel-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 28px 0 32px;
+    }
+    .carousel-dots { display: flex; gap: 10px; }
+    .carousel-dots button {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: none;
+      background: var(--border);
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+      padding: 0;
+    }
+    .carousel-dots button.active {
+      background: var(--accent-light);
+      transform: scale(1.35);
+    }
+
+    @media (max-width: 900px) {
+      .carousel-slide {
+        width: 85vw;
+        margin-left: calc(-42.5vw);
+      }
+      .carousel-slide.prev { transform: translateX(-70vw) scale(0.75); opacity: 0; }
+      .carousel-slide.next { transform: translateX(70vw) scale(0.75); opacity: 0; }
+      .carousel-slide.far-prev,
+      .carousel-slide.far-next { opacity: 0; }
+      .browser-viewport iframe {
+        transform: scale(calc(0.85 * 85 / 100));
+      }
+    }
+    @media (max-width: 768px) {
+      .carousel-track { height: 380px; }
+      .browser-viewport { height: 310px; }
+    }
+
+    /* ─── SERVICES ─── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      transition: border-color 0.3s;
+    }
+    .service-card:hover { border-color: var(--accent); }
+    .service-icon {
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: var(--radius);
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+    .service-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
+    .service-card p { color: var(--text-muted); font-size: 0.92rem; line-height: 1.65; }
+
+    /* ─── PRICING ─── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      position: relative;
+      transition: transform 0.3s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .pricing-card.featured {
+      border-color: var(--accent);
+      box-shadow: 0 0 60px var(--accent-glow);
+    }
+    .pricing-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 6px 20px;
+      border-radius: 50px;
+    }
+    .pricing-card .tier-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .pricing-card .price {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .pricing-card .price-note {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+    }
+    .pricing-card .divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 28px;
+    }
+    .pricing-card ul {
+      list-style: none;
+      margin-bottom: 32px;
+    }
+    .pricing-card ul li {
+      padding: 8px 0;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pricing-card ul li .check { color: var(--success); font-weight: 700; }
+    .pricing-card .btn { width: 100%; justify-content: center; }
+
+    /* ─── REVIEWS ─── */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .review-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+    }
+    .review-stars { color: var(--gold); font-size: 1rem; margin-bottom: 16px; letter-spacing: 2px; }
+    .review-card blockquote {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    .review-author { display: flex; align-items: center; gap: 12px; }
+    .review-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--accent-light);
+    }
+    .review-author-info .name { font-weight: 600; font-size: 0.95rem; }
+    .review-author-info .role { color: var(--text-dim); font-size: 0.82rem; }
+
+    /* ─── CTA / QUESTIONNAIRE ─── */
+    .cta-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .questionnaire-wrap {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .form-progress {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+    .form-progress .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .form-progress .step-dot.active { background: var(--accent-light); transform: scale(1.3); }
+    .form-progress .step-dot.done { background: var(--success); }
+
+    .form-step { display: none; animation: fadeUp 0.35s ease; }
+    .form-step.active { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .form-step h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .form-step .step-desc {
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-light);
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-group select option { background: var(--bg-card); }
+
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .checkbox-group label:hover { border-color: var(--accent); }
+    .checkbox-group input { display: none; }
+    .checkbox-group input:checked + span { color: var(--accent-light); }
+    .checkbox-group label:has(input:checked) {
+      border-color: var(--accent);
+      background: rgba(108, 92, 231, 0.1);
+    }
+
+    .form-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+    }
+    .form-nav .btn-back {
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 12px 20px;
+      transition: color 0.2s;
+    }
+    .form-nav .btn-back:hover { color: var(--text); }
+
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+      animation: fadeUp 0.4s ease;
+    }
+    .form-success .check-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(0, 206, 201, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2rem;
+      color: var(--success);
+    }
+    .form-success h3 { font-size: 1.6rem; margin-bottom: 10px; }
+    .form-success p { color: var(--text-muted); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 48px 0 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-logo { font-weight: 800; font-size: 1.1rem; }
+    .footer-logo span { color: var(--accent-light); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { width: 100%; text-align: center; color: var(--text-dim); font-size: 0.82rem; margin-top: 24px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--bg);
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        z-index: 999;
+      }
+      .nav-links.open a { font-size: 1.2rem; }
+      .nav-toggle { display: block; z-index: 1001; }
+      .hero h1 { font-size: clamp(2.2rem, 8vw, 3.2rem); }
+      .section { padding: 72px 0; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .form-nav { flex-direction: column; gap: 12px; }
+      .form-nav .btn-back { order: 2; }
+      .form-nav .btn { order: 1; width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="nav">
+  <div class="container">
+    <a href="#" class="nav-logo">Custom<span>ForAll</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#portfolio" onclick="closeNav()">Work</a></li>
+      <li><a href="#services" onclick="closeNav()">Services</a></li>
+      <li><a href="#pricing" onclick="closeNav()">Pricing</a></li>
+      <li><a href="#reviews" onclick="closeNav()">Reviews</a></li>
+      <li><a href="#contact" class="btn btn-primary btn-sm" onclick="closeNav()">Get Started</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Currently accepting new projects
+      </div>
+      <h1>We build websites that <span class="gradient">grow your business</span></h1>
+      <p>From simple landing pages to full custom web apps — we design, build, and launch websites that look great, load fast, and turn visitors into customers.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Start Your Project &rarr;</a>
+        <a href="#portfolio" class="btn btn-outline">See Our Work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PORTFOLIO ─── -->
+<section class="section" id="portfolio">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Our Work</div>
+      <h2 class="section-title">Websites we've built</h2>
+      <p class="section-subtitle">Real businesses, real results. Every site is crafted to fit the client's brand and goals.</p>
+    </div>
+    <div class="carousel-wrap" id="portfolioCarousel">
+      <div class="carousel-track">
+
+        <div class="carousel-slide active" data-index="0">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-url">bestbetautofinish.com</span>
+              <a class="browser-visit" href="https://bestbetautofinish.com" target="_blank" rel="noopener">Visit Site</a>
+            </div>
+            <div class="browser-viewport">
+              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
+              <iframe src="https://bestbetautofinish.com" title="Best Bet Auto Finish" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-slide" data-index="1">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-url">spilmanstreeservice.com</span>
+              <a class="browser-visit" href="https://spilmanstreeservice.com" target="_blank" rel="noopener">Visit Site</a>
+            </div>
+            <div class="browser-viewport">
+              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
+              <iframe src="https://spilmanstreeservice.com" title="Spilman's Tree Service" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-slide" data-index="2">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <button class="browser-back" type="button" aria-label="Reload preview" title="Reload preview">&#10227;</button>
+              <span class="browser-url">psychurch.org</span>
+              <a class="browser-visit" href="https://psychurch.org" target="_blank" rel="noopener">Visit Site</a>
+            </div>
+            <div class="browser-viewport">
+              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
+              <iframe src="https://psychurch.org" title="Psychurch.org" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-slide" data-index="3">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-url">windowcleaningnc.com</span>
+              <a class="browser-visit" href="https://windowcleaningnc.com" target="_blank" rel="noopener">Visit Site</a>
+            </div>
+            <div class="browser-viewport">
+              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
+              <iframe src="https://windowcleaningnc.com" title="Crystal Clear Window Cleaning" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-slide" data-index="4">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-dot"></span>
+              <span class="browser-url">dlaraconstruction.com</span>
+              <a class="browser-visit" href="https://dlaraconstruction.com" target="_blank" rel="noopener">Visit Site</a>
+            </div>
+            <div class="browser-viewport">
+              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
+              <iframe src="https://dlaraconstruction.com" title="D'Lara Construction" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="carousel-controls">
+        <div class="carousel-dots" id="carouselDots">
+          <button class="active" aria-label="Project 1"></button>
+          <button aria-label="Project 2"></button>
+          <button aria-label="Project 3"></button>
+          <button aria-label="Project 4"></button>
+          <button aria-label="Project 5"></button>
+        </div>
+      </div>
+
+      <div class="carousel-details-area">
+        <div class="portfolio-details active" data-detail="0">
+          <div>
+            <h3><a href="https://bestbetautofinish.com" target="_blank" rel="noopener">BestBetAutoFinish.com</a></h3>
+            <p>A bold, dark-themed website for an automotive body shop and detailing business. Features service cards for collision, frame repair, paint refinishing, and towing. Includes before/after displays, insurance partnerships, customer reviews, and embedded Google Maps.</p>
+            <div class="portfolio-tags">
+              <span>Automotive</span>
+              <span>Service Cards</span>
+              <span>Before &amp; After</span>
+              <span>Google Maps</span>
+              <span>Reviews</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-details" data-detail="1">
+          <div>
+            <h3><a href="https://spilmanstreeservice.com" target="_blank" rel="noopener">SpilmansTreeService.com</a></h3>
+            <p>A professional service business website for a local tree care company. Includes a hero section with click-to-call, service breakdowns with icons, a work gallery, service area map with city callouts, customer testimonials, and a contact form with free estimate requests.</p>
+            <div class="portfolio-tags">
+              <span>Service Business</span>
+              <span>Lead Capture</span>
+              <span>Photo Gallery</span>
+              <span>Reviews</span>
+              <span>Click-to-Call</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-details" data-detail="2">
+          <div>
+            <h3><a href="https://psychurch.org" target="_blank" rel="noopener">Psychurch.org</a></h3>
+            <p>A full-scale web application built for a global music community. Features include user accounts, a media library with streaming and downloads, artist profiles, album pages with track listings, genre-based browsing, search, and an admin dashboard for content management.</p>
+            <div class="portfolio-tags">
+              <span>Custom Web App</span>
+              <span>User Accounts</span>
+              <span>Media Streaming</span>
+              <span>Admin Dashboard</span>
+              <span>Search &amp; Filtering</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-details" data-detail="3">
+          <div>
+            <h3><a href="https://windowcleaningnc.com" target="_blank" rel="noopener">WindowCleaningNC.com</a></h3>
+            <p>A clean, professional website for a residential and commercial window cleaning company. Features a hero slider, quick-access estimate form, detailed service descriptions for window cleaning, pressure washing, gutter cleaning, and house cleaning. Includes a photo gallery, reviews, and multiple contact points.</p>
+            <div class="portfolio-tags">
+              <span>Service Business</span>
+              <span>Estimate Forms</span>
+              <span>Photo Gallery</span>
+              <span>Multi-service</span>
+              <span>Reviews</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-details" data-detail="4">
+          <div>
+            <h3><a href="https://dlaraconstruction.com" target="_blank" rel="noopener">DLaraConstruction.com</a></h3>
+            <p>A professional website for a licensed and insured construction company serving Central North Carolina. Features service highlights for concrete driveways, patios, small grading, and demolition. Includes a project gallery, customer testimonials, service area coverage, and a free quote request form.</p>
+            <div class="portfolio-tags">
+              <span>Construction</span>
+              <span>Service Areas</span>
+              <span>Photo Gallery</span>
+              <span>Reviews</span>
+              <span>Free Quote Form</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SERVICES ─── -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">What We Do</div>
+      <h2 class="section-title">Services</h2>
+      <p class="section-subtitle">Everything you need to get online and start growing.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">&#127912;</div>
+        <h3>Web Design &amp; Responsive Layout</h3>
+        <p>Custom designs tailored to your brand — no cookie-cutter templates. Every site is built to look and work perfectly on phones, tablets, and desktops.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">&#128187;</div>
+        <h3>Web Development</h3>
+        <p>From simple landing pages to complex web apps. Fast-loading, mobile-friendly, and built with clean code.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">&#128197;</div>
+        <h3>Maintenance &amp; Updates</h3>
+        <p>Keep your site running smoothly with ongoing support, content updates, and security patches.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">&#128640;</div>
+        <h3>Hosting &amp; Launch</h3>
+        <p>We handle domain setup, hosting, SSL, and launch so you don't have to worry about the technical stuff.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─── -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Simple, transparent pricing</h2>
+      <p class="section-subtitle">Choose the tier that fits your needs. Every package includes hosting setup and mobile-responsive design.</p>
+    </div>
+    <div class="pricing-grid">
+
+      <div class="pricing-card">
+        <div class="tier-name">Starter</div>
+        <div class="price">$499</div>
+        <div class="price-note">One-time &middot; perfect for getting online</div>
+        <div class="divider"></div>
+        <ul>
+          <li><span class="check">&#10003;</span> 1–3 page website</li>
+          <li><span class="check">&#10003;</span> Mobile responsive</li>
+          <li><span class="check">&#10003;</span> Contact form</li>
+          <li><span class="check">&#10003;</span> Google Business integration</li>
+          <li><span class="check">&#10003;</span> Hosting &amp; domain setup</li>
+          <li><span class="check">&#10003;</span> 1 round of revisions</li>
+          <li><span class="check">&#10003;</span> Delivered in ~1 week</li>
+        </ul>
+        <a href="#contact" class="btn btn-outline">Get Started</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="tier-name">Custom</div>
+        <div class="price">$1,299</div>
+        <div class="price-note">One-time &middot; built around your brand</div>
+        <div class="divider"></div>
+        <ul>
+          <li><span class="check">&#10003;</span> 5–10 page website</li>
+          <li><span class="check">&#10003;</span> Custom design &amp; branding</li>
+          <li><span class="check">&#10003;</span> Lead capture forms</li>
+          <li><span class="check">&#10003;</span> Photo gallery / portfolio</li>
+          <li><span class="check">&#10003;</span> Google Maps integration</li>
+          <li><span class="check">&#10003;</span> Social media integration</li>
+          <li><span class="check">&#10003;</span> 3 rounds of revisions</li>
+          <li><span class="check">&#10003;</span> Delivered in ~2 weeks</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary">Get Started</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="tier-name">Pro</div>
+        <div class="price">$2,999+</div>
+        <div class="price-note">Custom quote &middot; full-scale web solution</div>
+        <div class="divider"></div>
+        <ul>
+          <li><span class="check">&#10003;</span> Unlimited pages</li>
+          <li><span class="check">&#10003;</span> Custom web application</li>
+          <li><span class="check">&#10003;</span> User accounts &amp; dashboards</li>
+          <li><span class="check">&#10003;</span> E-commerce / payments</li>
+          <li><span class="check">&#10003;</span> Admin panel / CMS</li>
+          <li><span class="check">&#10003;</span> API integrations</li>
+          <li><span class="check">&#10003;</span> Ongoing maintenance plan</li>
+          <li><span class="check">&#10003;</span> Priority support</li>
+        </ul>
+        <a href="#contact" class="btn btn-outline">Contact Us</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── REVIEWS ─── -->
+<section class="section" id="reviews">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Testimonials</div>
+      <h2 class="section-title">What our clients say</h2>
+      <p class="section-subtitle">Don't take our word for it — hear from the people we've worked with.</p>
+    </div>
+    <div class="reviews-grid">
+
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote>"They built exactly what we needed — a clean site that actually brings in new customers. The process was easy and they delivered fast."</blockquote>
+        <div class="review-author">
+          <div class="review-avatar">SP</div>
+          <div class="review-author-info">
+            <div class="name">Scott Pine</div>
+            <div class="role">Crystal Clear Window Cleaning</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote>"Professional, responsive, and they actually listened to what I wanted. My site looks great on every device and I get compliments all the time."</blockquote>
+        <div class="review-author">
+          <div class="review-avatar">JS</div>
+          <div class="review-author-info">
+            <div class="name">Jeff Spilman</div>
+            <div class="role">Spilman's Tree Service</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote>"From day one they made the whole process simple. I told them what I needed and they handled everything. Best investment I've made for my business."</blockquote>
+        <div class="review-author">
+          <div class="review-avatar">MB</div>
+          <div class="review-author-info">
+            <div class="name">Mike B.</div>
+            <div class="role">Best Bet Auto Finish</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA / QUESTIONNAIRE ─── -->
+<section class="section cta-section" id="contact">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Get Started</div>
+      <h2 class="section-title">Tell us about your project</h2>
+      <p class="section-subtitle">Answer a few quick questions and we'll get back to you within 24 hours with a free quote.</p>
+    </div>
+
+    <div class="questionnaire-wrap">
+      <div class="form-progress" id="formProgress">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <form id="questionnaire" novalidate>
+
+        <!-- Step 1: About You -->
+        <div class="form-step active" data-step="0">
+          <h3>About You</h3>
+          <p class="step-desc">Let's start with the basics.</p>
+          <div class="form-group">
+            <label for="q-name">Your Name</label>
+            <input type="text" id="q-name" name="name" placeholder="John Smith" required>
+          </div>
+          <div class="form-group">
+            <label for="q-email">Email Address</label>
+            <input type="email" id="q-email" name="email" placeholder="john@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="q-phone">Phone Number</label>
+            <input type="tel" id="q-phone" name="phone" placeholder="(336) 555-1234">
+          </div>
+          <div class="form-nav">
+            <span></span>
+            <button type="button" class="btn btn-primary" onclick="nextStep()">Continue &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Your Business -->
+        <div class="form-step" data-step="1">
+          <h3>Your Business</h3>
+          <p class="step-desc">Help us understand what you do.</p>
+          <div class="form-group">
+            <label for="q-business">Business Name</label>
+            <input type="text" id="q-business" name="business" placeholder="Acme Services LLC">
+          </div>
+          <div class="form-group">
+            <label for="q-industry">What industry are you in?</label>
+            <select id="q-industry" name="industry">
+              <option value="" disabled selected>Select your industry</option>
+              <option>Home Services (Cleaning, Landscaping, HVAC, etc.)</option>
+              <option>Automotive</option>
+              <option>Restaurant / Food</option>
+              <option>Retail / E-commerce</option>
+              <option>Health &amp; Wellness</option>
+              <option>Real Estate</option>
+              <option>Non-Profit / Church</option>
+              <option>Professional Services (Legal, Accounting, etc.)</option>
+              <option>Construction / Trades</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="q-current">Do you have a current website?</label>
+            <input type="text" id="q-current" name="current_website" placeholder="https://... or 'No'">
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-back" onclick="prevStep()">&larr; Back</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep()">Continue &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 3: What Do You Need? -->
+        <div class="form-step" data-step="2">
+          <h3>What do you need?</h3>
+          <p class="step-desc">Select all that apply.</p>
+          <div class="form-group">
+            <div class="checkbox-group">
+              <label><input type="checkbox" name="features" value="New Website"><span>New Website</span></label>
+              <label><input type="checkbox" name="features" value="Redesign"><span>Redesign Existing Site</span></label>
+              <label><input type="checkbox" name="features" value="E-commerce"><span>E-commerce / Online Store</span></label>
+              <label><input type="checkbox" name="features" value="Social Media Integration"><span>Social Media Integration</span></label>
+              <label><input type="checkbox" name="features" value="Logo / Branding"><span>Logo / Branding</span></label>
+              <label><input type="checkbox" name="features" value="Contact Forms"><span>Contact / Lead Forms</span></label>
+              <label><input type="checkbox" name="features" value="Photo Gallery"><span>Photo Gallery</span></label>
+              <label><input type="checkbox" name="features" value="Booking / Scheduling"><span>Booking / Scheduling</span></label>
+              <label><input type="checkbox" name="features" value="Blog"><span>Blog</span></label>
+              <label><input type="checkbox" name="features" value="Other"><span>Something Else</span></label>
+            </div>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-back" onclick="prevStep()">&larr; Back</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep()">Continue &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Budget & Timeline -->
+        <div class="form-step" data-step="3">
+          <h3>Budget &amp; Timeline</h3>
+          <p class="step-desc">So we can tailor the right package for you.</p>
+          <div class="form-group">
+            <label for="q-budget">What's your budget range?</label>
+            <select id="q-budget" name="budget">
+              <option value="" disabled selected>Select a range</option>
+              <option>Under $500</option>
+              <option>$500 – $1,000</option>
+              <option>$1,000 – $2,500</option>
+              <option>$2,500 – $5,000</option>
+              <option>$5,000+</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="q-timeline">When do you need it?</label>
+            <select id="q-timeline" name="timeline">
+              <option value="" disabled selected>Select a timeline</option>
+              <option>ASAP</option>
+              <option>Within 2 weeks</option>
+              <option>Within 1 month</option>
+              <option>Within 3 months</option>
+              <option>No rush — just exploring</option>
+            </select>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-back" onclick="prevStep()">&larr; Back</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep()">Continue &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Step 5: Anything Else -->
+        <div class="form-step" data-step="4">
+          <h3>Anything else?</h3>
+          <p class="step-desc">Tell us more about your vision, inspiration, or questions.</p>
+          <div class="form-group">
+            <label for="q-details">Project Details</label>
+            <textarea id="q-details" name="details" placeholder="I'd like a site similar to... / I need it to include... / Any other details"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="q-referral">How did you hear about us?</label>
+            <select id="q-referral" name="referral">
+              <option value="" disabled selected>Select one</option>
+              <option>Google Search</option>
+              <option>Social Media</option>
+              <option>Referral / Word of Mouth</option>
+              <option>Saw one of your websites</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-nav">
+            <button type="button" class="btn-back" onclick="prevStep()">&larr; Back</button>
+            <button type="submit" class="btn btn-primary">Submit Request &rarr;</button>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="form-success" id="formSuccess">
+        <div class="check-circle">&#10003;</div>
+        <h3>We got your request!</h3>
+        <p>Thanks for reaching out. We'll review your answers and get back to you within 24 hours with a personalized quote.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-logo">Custom<span>ForAll</span></div>
+      <ul class="footer-links">
+        <li><a href="#portfolio">Work</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="footer-copy">&copy; 2026 Custom For All. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+  // ─── Mobile nav toggle ───
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    navToggle.innerHTML = open ? '&#10005;' : '&#9776;';
+  });
+  function closeNav() {
+    navLinks.classList.remove('open');
+    navToggle.innerHTML = '&#9776;';
+  }
+
+  // ─── Multi-step form ───
+  let currentStep = 0;
+  const steps = document.querySelectorAll('.form-step');
+  const dots = document.querySelectorAll('.step-dot');
+
+  function showStep(n) {
+    steps.forEach((s, i) => {
+      s.classList.toggle('active', i === n);
+    });
+    dots.forEach((d, i) => {
+      d.classList.remove('active', 'done');
+      if (i < n) d.classList.add('done');
+      if (i === n) d.classList.add('active');
+    });
+  }
+
+  function nextStep() {
+    if (currentStep === 0) {
+      const name = document.getElementById('q-name');
+      const email = document.getElementById('q-email');
+      if (!name.value.trim() || !email.value.trim()) {
+        name.style.borderColor = name.value.trim() ? '' : '#e74c3c';
+        email.style.borderColor = email.value.trim() ? '' : '#e74c3c';
+        return;
+      }
+      name.style.borderColor = '';
+      email.style.borderColor = '';
+    }
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      showStep(currentStep);
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      showStep(currentStep);
+    }
+  }
+
+  // ─── Portfolio carousel (deck style) ───
+  const slides = document.querySelectorAll('.carousel-slide');
+  const carouselDots = document.querySelectorAll('#carouselDots button');
+  const details = document.querySelectorAll('.portfolio-details');
+  let activeSlide = 0;
+  const total = slides.length;
+
+  function positionSlides() {
+    slides.forEach((slide, i) => {
+      slide.classList.remove('active', 'prev', 'next', 'far-prev', 'far-next');
+      const diff = i - activeSlide;
+      if (diff === 0) slide.classList.add('active');
+      else if (diff === -1 || (activeSlide === 0 && i === total - 1)) slide.classList.add('prev');
+      else if (diff === 1 || (activeSlide === total - 1 && i === 0)) slide.classList.add('next');
+      else if (diff < -1) slide.classList.add('far-prev');
+      else slide.classList.add('far-next');
+    });
+    carouselDots.forEach((d, i) => {
+      d.classList.toggle('active', i === activeSlide);
+    });
+    details.forEach((d, i) => {
+      const wasActive = d.classList.contains('active');
+      d.classList.toggle('active', i === activeSlide);
+      if (!wasActive && i === activeSlide) {
+        d.style.animation = 'none';
+        void d.offsetWidth;
+        d.style.animation = '';
+      }
+    });
+  }
+
+  let deferDelay = 1500;
+  slides.forEach(slide => {
+    const iframe = slide.querySelector('iframe');
+    if (!iframe) return;
+    iframe.dataset.src = iframe.src;
+    if (!slide.classList.contains('active')) {
+      iframe.src = 'about:blank';
+      setTimeout(() => { iframe.src = iframe.dataset.src; }, deferDelay);
+      deferDelay += 1000;
+    }
+  });
+
+  function setExploringState(slide, isExploring) {
+    const viewport = slide?.querySelector('.browser-viewport');
+    const frame = slide?.querySelector('.browser-frame');
+    if (!viewport || !frame) return;
+
+    viewport.classList.toggle('exploring', isExploring);
+    frame.classList.toggle('is-exploring', isExploring);
+  }
+
+  function reloadMockBrowser(slide) {
+    const iframe = slide?.querySelector('iframe');
+    if (!iframe) return;
+
+    // Keep the iframe interactive when the toolbar control is used.
+    setExploringState(slide, true);
+    stopMedia(slide);
+  }
+
+  function stopMedia(slide) {
+    const iframe = slide.querySelector('iframe');
+    if (!iframe) return;
+    iframe.src = 'about:blank';
+    // Restore after a tick so it reloads fresh (kills media but shows the site again)
+    setTimeout(() => { iframe.src = iframe.dataset.src; }, 50);
+  }
+
+  function goToSlide(n) {
+    activeSlide = ((n % total) + total) % total;
+    slides.forEach(slide => setExploringState(slide, false));
+    document.body.style.overflow = '';
+    carouselEl.classList.add('transitioning');
+    positionSlides();
+    setTimeout(() => carouselEl.classList.remove('transitioning'), 500);
+  }
+
+  carouselDots.forEach((dot, i) => dot.addEventListener('click', () => goToSlide(i)));
+
+  slides.forEach((slide, i) => {
+    slide.addEventListener('click', () => {
+      if (i !== activeSlide) goToSlide(i);
+    });
+  });
+
+  document.querySelectorAll('.browser-back').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      reloadMockBrowser(button.closest('.carousel-slide'));
+    });
+  });
+
+  document.querySelectorAll('.browser-visit').forEach(link => {
+    link.addEventListener('click', (event) => {
+      event.stopPropagation();
+    });
+  });
+
+  positionSlides();
+
+  // ─── Iframe overlay + scroll lock ───
+  document.querySelectorAll('.iframe-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      const slide = overlay.closest('.carousel-slide');
+      if (!slide.classList.contains('active')) return;
+      e.stopPropagation();
+      if (slide.dataset.index === '0') stopMedia(slide);
+      setExploringState(slide, true);
+    });
+  });
+
+  document.querySelectorAll('.browser-viewport').forEach(vp => {
+    vp.addEventListener('mouseenter', () => {
+      const slide = vp.closest('.carousel-slide');
+      if (slide && slide.classList.contains('active') && vp.classList.contains('exploring')) {
+        document.body.style.overflow = 'hidden';
+      }
+    });
+    vp.addEventListener('mouseleave', () => {
+      document.body.style.overflow = '';
+    });
+    vp.addEventListener('wheel', (e) => {
+      if (vp.classList.contains('exploring')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  });
+
+  function exitExploring() {
+    document.querySelectorAll('.browser-frame.is-exploring').forEach(frame => {
+      setExploringState(frame.closest('.carousel-slide'), false);
+    });
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.browser-viewport') && !e.target.closest('.browser-bar')) exitExploring();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') exitExploring();
+  });
+
+  // ─── Stop media when carousel leaves viewport ───
+  const carouselEl = document.getElementById('portfolioCarousel');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) {
+        exitExploring();
+      }
+    });
+  }, { threshold: 0.1 });
+  observer.observe(carouselEl);
+
+  // ─── Form submission ───
+  document.getElementById('questionnaire').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((val, key) => {
+      if (data[key]) {
+        data[key] = [].concat(data[key], val);
+      } else {
+        data[key] = val;
+      }
+    });
+
+    console.log('Form submission:', data);
+
+    // TODO: Replace with actual endpoint (email service, Formspree, Netlify Forms, etc.)
+    // Example: fetch('https://formspree.io/f/YOUR_ID', { method: 'POST', body: formData });
+
+    this.style.display = 'none';
+    document.getElementById('formProgress').style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
