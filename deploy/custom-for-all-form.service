@@ -1,0 +1,18 @@
+[Unit]
+Description=Custom For All inquiry form container
+After=network-online.target docker.service cfa-form-firewall.service
+Wants=network-online.target
+Requires=docker.service cfa-form-firewall.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/client-services/custom-for-all-form/current
+Environment=CFA_FORM_ENV_FILE=/etc/custom-for-all/form.env
+ExecStart=/usr/bin/docker compose up -d --remove-orphans
+ExecStop=/usr/bin/docker compose down
+RemainAfterExit=yes
+TimeoutStartSec=180
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

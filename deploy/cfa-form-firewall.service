@@ -1,0 +1,14 @@
+[Unit]
+Description=Custom For All form container network isolation
+After=docker.service
+Requires=docker.service
+Before=custom-for-all-form.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/cfa-form-firewall start
+ExecStop=/usr/local/sbin/cfa-form-firewall stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
