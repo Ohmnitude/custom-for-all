@@ -2,6 +2,7 @@
 set -eu
 
 CHAIN="CFA-FORM-EGRESS"
+HOST_CHAIN="CFA-FORM-HOST"
 SUBNET="172.30.250.0/28"
 
 start() {
@@ -17,9 +18,19 @@ start() {
   iptables -A "$CHAIN" -j RETURN
   iptables -C DOCKER-USER -s "$SUBNET" -j "$CHAIN" 2>/dev/null \
     || iptables -I DOCKER-USER 1 -s "$SUBNET" -j "$CHAIN"
+
+  iptables -N "$HOST_CHAIN" 2>/dev/null || true
+  iptables -F "$HOST_CHAIN"
+  iptables -A "$HOST_CHAIN" -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+  iptables -A "$HOST_CHAIN" -j REJECT
+  iptables -C INPUT -s "$SUBNET" -j "$HOST_CHAIN" 2>/dev/null \
+    || iptables -I INPUT 1 -s "$SUBNET" -j "$HOST_CHAIN"
 }
 
 stop() {
+  iptables -D INPUT -s "$SUBNET" -j "$HOST_CHAIN" 2>/dev/null || true
+  iptables -F "$HOST_CHAIN" 2>/dev/null || true
+  iptables -X "$HOST_CHAIN" 2>/dev/null || true
   iptables -D DOCKER-USER -s "$SUBNET" -j "$CHAIN" 2>/dev/null || true
   iptables -F "$CHAIN" 2>/dev/null || true
   iptables -X "$CHAIN" 2>/dev/null || true
