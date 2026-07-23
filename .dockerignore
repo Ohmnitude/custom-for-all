@@ -1,0 +1,9 @@
+.env
+.git
+.gitignore
+assets
+data
+deploy
+node_modules
+npm-debug.log*
+README.md

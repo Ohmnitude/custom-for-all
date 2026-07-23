@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Custom For All — Web Design Studio</title>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -208,6 +209,9 @@
       transform: translateX(300px) scale(0.7);
       filter: brightness(0.4);
       z-index: 1;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .carousel-slide.active {
       transform: translateX(0) scale(1);
@@ -219,14 +223,14 @@
     }
     .carousel-slide.prev {
       transform: translateX(-340px) scale(0.78);
-      opacity: 0.6;
+      opacity: 1;
       filter: brightness(0.5);
       z-index: 5;
       pointer-events: auto;
     }
     .carousel-slide.next {
       transform: translateX(340px) scale(0.78);
-      opacity: 0.6;
+      opacity: 1;
       filter: brightness(0.5);
       z-index: 5;
       pointer-events: auto;
@@ -255,7 +259,7 @@
     .carousel-slide.active .browser-frame {
       box-shadow: 0 16px 60px rgba(108, 92, 231, 0.2), 0 8px 40px rgba(0,0,0,0.5);
     }
-    .carousel-slide.active .browser-frame.is-exploring:hover {
+    .carousel-slide.active .browser-frame:hover {
       border-color: var(--accent-light);
       box-shadow:
         0 16px 60px rgba(108, 92, 231, 0.24),
@@ -279,28 +283,6 @@
     .browser-dot:nth-child(1) { background: #ff5f57; }
     .browser-dot:nth-child(2) { background: #ffbd2e; }
     .browser-dot:nth-child(3) { background: #28c840; }
-    .browser-back {
-      margin-left: 10px;
-      background: var(--surface);
-      border: none;
-      color: var(--text);
-      min-width: 32px;
-      height: 28px;
-      padding: 0 10px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s, background 0.2s;
-    }
-    .browser-back:hover {
-      color: #fff;
-      background: var(--accent);
-    }
     .browser-url {
       flex: 1;
       margin-left: 8px;
@@ -334,19 +316,27 @@
       height: 480px;
       overflow: hidden;
       position: relative;
+      background: var(--bg);
     }
-    .browser-viewport iframe {
-      width: 1280px;
-      height: 900px;
-      border: none;
-      transform: scale(0.531);
-      transform-origin: top left;
+    .browser-snapshot-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .carousel-slide:not(.active) .browser-snapshot-link {
       pointer-events: none;
     }
-    .browser-viewport.exploring iframe {
-      pointer-events: auto;
+    .browser-snapshot {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      -webkit-user-drag: none;
     }
-    .iframe-overlay {
+    .preview-overlay {
       position: absolute;
       inset: 0;
       z-index: 5;
@@ -357,10 +347,10 @@
       cursor: pointer;
       transition: background 0.3s;
     }
-    .carousel-wrap:not(.transitioning) .carousel-slide.active .iframe-overlay:hover {
+    .carousel-wrap:not(.transitioning) .carousel-slide.active .browser-snapshot-link:hover .preview-overlay {
       background: rgba(10, 10, 15, 0.55);
     }
-    .iframe-overlay .explore-label {
+    .preview-overlay .preview-label {
       opacity: 0;
       padding: 14px 32px;
       background: var(--accent);
@@ -373,12 +363,14 @@
       box-shadow: 0 4px 24px var(--accent-glow);
       pointer-events: none;
     }
-    .carousel-wrap:not(.transitioning) .carousel-slide.active .iframe-overlay:hover .explore-label {
+    .carousel-wrap:not(.transitioning) .carousel-slide.active .browser-snapshot-link:hover .preview-label,
+    .carousel-wrap:not(.transitioning) .carousel-slide.active .browser-snapshot-link:focus-visible .preview-label {
       opacity: 1;
       transform: translateY(0);
     }
-    .browser-viewport.exploring .iframe-overlay {
-      display: none;
+    .browser-snapshot-link:focus-visible {
+      outline: 3px solid var(--accent-light);
+      outline-offset: -3px;
     }
 
     /* Active slide details (shown below the track) */
@@ -458,9 +450,6 @@
       .carousel-slide.next { transform: translateX(70vw) scale(0.75); opacity: 0; }
       .carousel-slide.far-prev,
       .carousel-slide.far-next { opacity: 0; }
-      .browser-viewport iframe {
-        transform: scale(calc(0.85 * 85 / 100));
-      }
     }
     @media (max-width: 768px) {
       .carousel-track { height: 380px; }
@@ -738,6 +727,45 @@
     .form-success h3 { font-size: 1.6rem; margin-bottom: 10px; }
     .form-success p { color: var(--text-muted); }
 
+    .form-honeypot {
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .turnstile-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 24px;
+      padding: 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    #turnstileWidget { width: 100%; min-height: 65px; }
+    .form-security-status {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    .form-security-status.verified { color: var(--success); }
+    .form-error {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 14px;
+      color: #ffb4b4;
+      background: rgba(231, 76, 60, 0.12);
+      border: 1px solid rgba(231, 76, 60, 0.35);
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+    .form-error.visible { display: block; }
+    .btn:disabled { cursor: wait; opacity: 0.65; transform: none; }
+
     /* ─── FOOTER ─── */
     footer {
       padding: 48px 0 32px;
@@ -759,6 +787,26 @@
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 768px) {
+      html { scroll-padding-top: 72px; }
+      .container { padding: 0 18px; }
+      .section { padding: 64px 0; }
+      .section-header { margin-bottom: 36px; }
+      .section-label { font-size: 0.72rem; letter-spacing: 2.5px; }
+      .section-title { font-size: clamp(1.9rem, 9vw, 2.55rem); margin-bottom: 14px; }
+      .section-subtitle { font-size: 1rem; line-height: 1.65; }
+
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding: 10px 0;
+        background: rgba(10, 10, 15, 0.92);
+        border-bottom: 1px solid rgba(42, 42, 61, 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+      nav .container { min-height: 44px; }
+      body.nav-open { overflow: hidden; }
       .nav-links { display: none; }
       .nav-links.open {
         display: flex;
@@ -775,13 +823,132 @@
         z-index: 999;
       }
       .nav-links.open a { font-size: 1.2rem; }
-      .nav-toggle { display: block; z-index: 1001; }
-      .hero h1 { font-size: clamp(2.2rem, 8vw, 3.2rem); }
-      .section { padding: 72px 0; }
+      .nav-links.open .btn { padding: 12px 28px; }
+      .nav-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        z-index: 1001;
+        border-radius: 50%;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .hero {
+        min-height: calc(100svh - 65px);
+        padding: 52px 0 72px;
+        text-align: center;
+      }
+      .hero::before {
+        top: -10%;
+        right: -65%;
+        width: 520px;
+        height: 520px;
+      }
+      .hero-content { max-width: none; }
+      .hero-badge {
+        max-width: 100%;
+        margin-bottom: 22px;
+        font-size: 0.76rem;
+      }
+      .hero h1 {
+        font-size: clamp(2.35rem, 12vw, 3.45rem);
+        line-height: 1.02;
+        letter-spacing: -1.5px;
+        margin-bottom: 22px;
+      }
+      .hero p {
+        margin: 0 auto 32px;
+        font-size: 1rem;
+        line-height: 1.65;
+      }
+      .hero-actions { flex-direction: column; gap: 12px; }
+      .hero-actions .btn {
+        width: 100%;
+        min-height: 50px;
+        justify-content: center;
+      }
+
+      #portfolio { overflow: hidden; }
+      .carousel-track {
+        height: min(calc((100vw - 36px) * 0.703125 + 54px), 560px);
+        touch-action: pan-y;
+      }
+      .carousel-slide {
+        width: 100%;
+        margin-left: -50%;
+      }
+      .carousel-slide.prev { transform: translateX(-100vw) scale(0.9); opacity: 0; }
+      .carousel-slide.next { transform: translateX(100vw) scale(0.9); opacity: 0; }
+      .carousel-slide.far-prev,
+      .carousel-slide.far-next { opacity: 0; }
+      .browser-frame { border-radius: 14px; }
+      .browser-bar { gap: 5px; padding: 8px 10px; }
+      .browser-dot { width: 8px; height: 8px; flex: 0 0 auto; }
+      .browser-url {
+        min-width: 0;
+        margin-left: 4px;
+        padding: 5px 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.66rem;
+      }
+      .browser-visit {
+        min-width: 74px;
+        height: 34px;
+        padding: 0 10px;
+        font-size: 0.7rem;
+      }
+      .browser-viewport {
+        height: auto;
+        aspect-ratio: 1280 / 900;
+      }
+      .preview-label { display: none; }
+      .carousel-controls { margin: 20px 0 26px; }
+      .carousel-dots { gap: 14px; }
+      .carousel-dots button { width: 12px; height: 12px; }
+      .carousel-details-area { text-align: left; }
+      .portfolio-details h3 { font-size: 1.28rem; overflow-wrap: anywhere; }
+      .portfolio-details p { font-size: 0.9rem; }
+      .portfolio-tags { gap: 7px; }
+      .portfolio-tags span { padding: 5px 11px; font-size: 0.72rem; }
+
+      .services-grid,
+      .reviews-grid { grid-template-columns: 1fr; gap: 16px; }
+      .service-card { padding: 26px 22px; }
+      .service-icon { margin-bottom: 16px; }
       .pricing-grid { grid-template-columns: 1fr; }
+      .pricing-card { padding: 36px 22px; }
+      .pricing-card .price { font-size: 2.6rem; }
+      .review-card { padding: 26px 22px; }
+
+      .cta-section .section-header { margin-bottom: 32px; }
+      .form-progress { margin-bottom: 32px; }
+      .form-step h3 { font-size: 1.35rem; }
+      .form-step .step-desc { margin-bottom: 26px; }
+      .form-group input,
+      .form-group select,
+      .form-group textarea { font-size: 16px; padding: 13px 14px; }
+      .checkbox-group { display: grid; grid-template-columns: 1fr; }
+      .checkbox-group label { min-height: 46px; }
       .form-nav { flex-direction: column; gap: 12px; }
       .form-nav .btn-back { order: 2; }
-      .form-nav .btn { order: 1; width: 100%; justify-content: center; }
+      .form-nav .btn { order: 1; width: 100%; min-height: 48px; justify-content: center; }
+
+      footer { padding: 40px 0 28px; }
+      .footer-content { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; flex-wrap: wrap; gap: 12px 22px; }
+      .footer-copy { margin-top: 12px; }
+    }
+
+    @media (max-width: 390px) {
+      .hero h1 { font-size: 2.3rem; }
+      .hero-badge { padding: 7px 12px; }
+      .browser-dot { display: none; }
+      .browser-url { margin-left: 0; }
+      .pricing-card { padding-left: 18px; padding-right: 18px; }
     }
   </style>
 </head>
@@ -798,7 +965,7 @@
       <li><a href="#reviews" onclick="closeNav()">Reviews</a></li>
       <li><a href="#contact" class="btn btn-primary btn-sm" onclick="closeNav()">Get Started</a></li>
     </ul>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle menu" aria-controls="navLinks" aria-expanded="false">&#9776;</button>
   </div>
 </nav>
 
@@ -841,8 +1008,10 @@
               <a class="browser-visit" href="https://bestbetautofinish.com" target="_blank" rel="noopener">Visit Site</a>
             </div>
             <div class="browser-viewport">
-              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
-              <iframe src="https://bestbetautofinish.com" title="Best Bet Auto Finish" loading="lazy"></iframe>
+              <a class="browser-snapshot-link" href="https://bestbetautofinish.com" target="_blank" rel="noopener" aria-label="Open Best Bet Auto Finish website">
+                <img class="browser-snapshot" src="assets/bestbet.png?v=20260723" alt="Homepage preview of Best Bet Auto Finish" width="1280" height="900" loading="lazy" draggable="false">
+                <span class="preview-overlay" aria-hidden="true"><span class="preview-label">Open Live Site &#8599;</span></span>
+              </a>
             </div>
           </div>
         </div>
@@ -857,8 +1026,10 @@
               <a class="browser-visit" href="https://spilmanstreeservice.com" target="_blank" rel="noopener">Visit Site</a>
             </div>
             <div class="browser-viewport">
-              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
-              <iframe src="https://spilmanstreeservice.com" title="Spilman's Tree Service" loading="lazy"></iframe>
+              <a class="browser-snapshot-link" href="https://spilmanstreeservice.com" target="_blank" rel="noopener" aria-label="Open Spilman's Tree Service website">
+                <img class="browser-snapshot" src="assets/spilmans.png?v=20260723" alt="Homepage preview of Spilman's Tree Service" width="1280" height="900" loading="lazy" draggable="false">
+                <span class="preview-overlay" aria-hidden="true"><span class="preview-label">Open Live Site &#8599;</span></span>
+              </a>
             </div>
           </div>
         </div>
@@ -869,13 +1040,14 @@
               <span class="browser-dot"></span>
               <span class="browser-dot"></span>
               <span class="browser-dot"></span>
-              <button class="browser-back" type="button" aria-label="Reload preview" title="Reload preview">&#10227;</button>
               <span class="browser-url">psychurch.org</span>
               <a class="browser-visit" href="https://psychurch.org" target="_blank" rel="noopener">Visit Site</a>
             </div>
             <div class="browser-viewport">
-              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
-              <iframe src="https://psychurch.org" title="Psychurch.org" loading="lazy"></iframe>
+              <a class="browser-snapshot-link" href="https://psychurch.org" target="_blank" rel="noopener" aria-label="Open Psychurch website">
+                <img class="browser-snapshot" src="assets/psychurch.png?v=20260723" alt="Homepage preview of Psychurch" width="1280" height="900" loading="lazy" draggable="false">
+                <span class="preview-overlay" aria-hidden="true"><span class="preview-label">Open Live Site &#8599;</span></span>
+              </a>
             </div>
           </div>
         </div>
@@ -890,8 +1062,10 @@
               <a class="browser-visit" href="https://windowcleaningnc.com" target="_blank" rel="noopener">Visit Site</a>
             </div>
             <div class="browser-viewport">
-              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
-              <iframe src="https://windowcleaningnc.com" title="Crystal Clear Window Cleaning" loading="lazy"></iframe>
+              <a class="browser-snapshot-link" href="https://windowcleaningnc.com" target="_blank" rel="noopener" aria-label="Open Crystal Clear Window Cleaning website">
+                <img class="browser-snapshot" src="assets/windowcleaning.png?v=20260723" alt="Homepage preview of Crystal Clear Window Cleaning" width="1280" height="900" loading="lazy" draggable="false">
+                <span class="preview-overlay" aria-hidden="true"><span class="preview-label">Open Live Site &#8599;</span></span>
+              </a>
             </div>
           </div>
         </div>
@@ -906,8 +1080,10 @@
               <a class="browser-visit" href="https://dlaraconstruction.com" target="_blank" rel="noopener">Visit Site</a>
             </div>
             <div class="browser-viewport">
-              <div class="iframe-overlay"><span class="explore-label">Click to Explore</span></div>
-              <iframe src="https://dlaraconstruction.com" title="D'Lara Construction" loading="lazy"></iframe>
+              <a class="browser-snapshot-link" href="https://dlaraconstruction.com" target="_blank" rel="noopener" aria-label="Open D'Lara Construction website">
+                <img class="browser-snapshot" src="assets/dlara.png?v=20260723" alt="Homepage preview of D'Lara Construction" width="1280" height="900" loading="lazy" draggable="false">
+                <span class="preview-overlay" aria-hidden="true"><span class="preview-label">Open Live Site &#8599;</span></span>
+              </a>
             </div>
           </div>
         </div>
@@ -1138,9 +1314,9 @@
         <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
         <blockquote>"From day one they made the whole process simple. I told them what I needed and they handled everything. Best investment I've made for my business."</blockquote>
         <div class="review-author">
-          <div class="review-avatar">MB</div>
+          <div class="review-avatar">PM</div>
           <div class="review-author-info">
-            <div class="name">Mike B.</div>
+            <div class="name">Paul Mize</div>
             <div class="role">Best Bet Auto Finish</div>
           </div>
         </div>
@@ -1169,6 +1345,11 @@
       </div>
 
       <form id="questionnaire" novalidate>
+
+        <div class="form-honeypot" aria-hidden="true">
+          <label for="q-website">Leave this field empty</label>
+          <input type="text" id="q-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
 
         <!-- Step 1: About You -->
         <div class="form-step active" data-step="0">
@@ -1302,9 +1483,14 @@
               <option>Other</option>
             </select>
           </div>
+          <div class="turnstile-panel">
+            <div id="turnstileWidget"></div>
+            <p class="form-security-status" id="turnstileStatus" aria-live="polite">Loading secure verification…</p>
+          </div>
+          <div class="form-error" id="formError" role="alert" aria-live="assertive"></div>
           <div class="form-nav">
             <button type="button" class="btn-back" onclick="prevStep()">&larr; Back</button>
-            <button type="submit" class="btn btn-primary">Submit Request &rarr;</button>
+            <button type="submit" class="btn btn-primary" id="submitInquiryButton">Submit Request &rarr;</button>
           </div>
         </div>
 
@@ -1343,16 +1529,100 @@
   navToggle.addEventListener('click', () => {
     const open = navLinks.classList.toggle('open');
     navToggle.innerHTML = open ? '&#10005;' : '&#9776;';
+    navToggle.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('nav-open', open);
   });
   function closeNav() {
     navLinks.classList.remove('open');
     navToggle.innerHTML = '&#9776;';
+    navToggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('nav-open');
   }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeNav();
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) closeNav();
+  });
 
   // ─── Multi-step form ───
   let currentStep = 0;
   const steps = document.querySelectorAll('.form-step');
   const dots = document.querySelectorAll('.step-dot');
+  const formError = document.getElementById('formError');
+  const turnstileStatus = document.getElementById('turnstileStatus');
+  let turnstileToken = '';
+  let turnstileWidgetId = null;
+  let turnstileInitialization = null;
+
+  function setFormError(message = '') {
+    formError.textContent = message;
+    formError.classList.toggle('visible', Boolean(message));
+  }
+
+  function waitForTurnstile() {
+    return new Promise((resolve, reject) => {
+      let attempts = 0;
+      const timer = setInterval(() => {
+        attempts += 1;
+        if (window.turnstile) {
+          clearInterval(timer);
+          resolve(window.turnstile);
+        } else if (attempts >= 50) {
+          clearInterval(timer);
+          reject(new Error('Security verification did not load.'));
+        }
+      }, 100);
+    });
+  }
+
+  function ensureTurnstile() {
+    if (turnstileWidgetId !== null) return Promise.resolve();
+    if (turnstileInitialization) return turnstileInitialization;
+
+    turnstileStatus.textContent = 'Loading secure verification…';
+    turnstileInitialization = Promise.all([
+      fetch('/api/config', { headers: { Accept: 'application/json' } }).then((response) => {
+        if (!response.ok) throw new Error('Security configuration is unavailable.');
+        return response.json();
+      }),
+      waitForTurnstile(),
+    ]).then(([config, turnstile]) => {
+      if (!config.turnstileSiteKey) throw new Error('Security verification is not configured.');
+      turnstileWidgetId = turnstile.render('#turnstileWidget', {
+        sitekey: config.turnstileSiteKey,
+        theme: 'dark',
+        size: 'flexible',
+        callback(token) {
+          turnstileToken = token;
+          turnstileStatus.textContent = 'Secure verification complete.';
+          turnstileStatus.classList.add('verified');
+          setFormError();
+        },
+        'expired-callback'() {
+          turnstileToken = '';
+          turnstileStatus.textContent = 'Verification expired. Please complete it again.';
+          turnstileStatus.classList.remove('verified');
+        },
+        'error-callback'() {
+          turnstileToken = '';
+          turnstileStatus.textContent = 'Verification could not complete. Please try again.';
+          turnstileStatus.classList.remove('verified');
+          return true;
+        },
+      });
+    }).catch((error) => {
+      turnstileInitialization = null;
+      turnstileStatus.textContent = error.message;
+      turnstileStatus.classList.remove('verified');
+      setFormError('Secure verification could not load. Check your connection and try again.');
+      throw error;
+    });
+
+    return turnstileInitialization;
+  }
 
   function showStep(n) {
     steps.forEach((s, i) => {
@@ -1363,15 +1633,16 @@
       if (i < n) d.classList.add('done');
       if (i === n) d.classList.add('active');
     });
+    if (n === steps.length - 1) ensureTurnstile().catch(() => {});
   }
 
   function nextStep() {
     if (currentStep === 0) {
       const name = document.getElementById('q-name');
       const email = document.getElementById('q-email');
-      if (!name.value.trim() || !email.value.trim()) {
+      if (!name.value.trim() || !email.validity.valid) {
         name.style.borderColor = name.value.trim() ? '' : '#e74c3c';
-        email.style.borderColor = email.value.trim() ? '' : '#e74c3c';
+        email.style.borderColor = email.validity.valid ? '' : '#e74c3c';
         return;
       }
       name.style.borderColor = '';
@@ -1394,17 +1665,20 @@
   const slides = document.querySelectorAll('.carousel-slide');
   const carouselDots = document.querySelectorAll('#carouselDots button');
   const details = document.querySelectorAll('.portfolio-details');
+  const carouselEl = document.getElementById('portfolioCarousel');
   let activeSlide = 0;
   const total = slides.length;
 
   function positionSlides() {
     slides.forEach((slide, i) => {
       slide.classList.remove('active', 'prev', 'next', 'far-prev', 'far-next');
-      const diff = i - activeSlide;
-      if (diff === 0) slide.classList.add('active');
-      else if (diff === -1 || (activeSlide === 0 && i === total - 1)) slide.classList.add('prev');
-      else if (diff === 1 || (activeSlide === total - 1 && i === 0)) slide.classList.add('next');
-      else if (diff < -1) slide.classList.add('far-prev');
+      let offset = (i - activeSlide + total) % total;
+      if (offset > Math.floor(total / 2)) offset -= total;
+
+      if (offset === 0) slide.classList.add('active');
+      else if (offset === -1) slide.classList.add('prev');
+      else if (offset === 1) slide.classList.add('next');
+      else if (offset === -2) slide.classList.add('far-prev');
       else slide.classList.add('far-next');
     });
     carouselDots.forEach((d, i) => {
@@ -1421,48 +1695,8 @@
     });
   }
 
-  let deferDelay = 1500;
-  slides.forEach(slide => {
-    const iframe = slide.querySelector('iframe');
-    if (!iframe) return;
-    iframe.dataset.src = iframe.src;
-    if (!slide.classList.contains('active')) {
-      iframe.src = 'about:blank';
-      setTimeout(() => { iframe.src = iframe.dataset.src; }, deferDelay);
-      deferDelay += 1000;
-    }
-  });
-
-  function setExploringState(slide, isExploring) {
-    const viewport = slide?.querySelector('.browser-viewport');
-    const frame = slide?.querySelector('.browser-frame');
-    if (!viewport || !frame) return;
-
-    viewport.classList.toggle('exploring', isExploring);
-    frame.classList.toggle('is-exploring', isExploring);
-  }
-
-  function reloadMockBrowser(slide) {
-    const iframe = slide?.querySelector('iframe');
-    if (!iframe) return;
-
-    // Keep the iframe interactive when the toolbar control is used.
-    setExploringState(slide, true);
-    stopMedia(slide);
-  }
-
-  function stopMedia(slide) {
-    const iframe = slide.querySelector('iframe');
-    if (!iframe) return;
-    iframe.src = 'about:blank';
-    // Restore after a tick so it reloads fresh (kills media but shows the site again)
-    setTimeout(() => { iframe.src = iframe.dataset.src; }, 50);
-  }
-
   function goToSlide(n) {
     activeSlide = ((n % total) + total) % total;
-    slides.forEach(slide => setExploringState(slide, false));
-    document.body.style.overflow = '';
     carouselEl.classList.add('transitioning');
     positionSlides();
     setTimeout(() => carouselEl.classList.remove('transitioning'), 500);
@@ -1470,21 +1704,30 @@
 
   carouselDots.forEach((dot, i) => dot.addEventListener('click', () => goToSlide(i)));
 
+  let touchStartX = 0;
+  let touchStartY = 0;
+  carouselEl.addEventListener('touchstart', (event) => {
+    const touch = event.changedTouches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  }, { passive: true });
+
+  carouselEl.addEventListener('touchend', (event) => {
+    const touch = event.changedTouches[0];
+    const distanceX = touch.clientX - touchStartX;
+    const distanceY = touch.clientY - touchStartY;
+
+    if (Math.abs(distanceX) < 50 || Math.abs(distanceX) <= Math.abs(distanceY)) return;
+    goToSlide(activeSlide + (distanceX < 0 ? 1 : -1));
+  }, { passive: true });
+
   slides.forEach((slide, i) => {
     slide.addEventListener('click', () => {
       if (i !== activeSlide) goToSlide(i);
     });
   });
 
-  document.querySelectorAll('.browser-back').forEach(button => {
-    button.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      reloadMockBrowser(button.closest('.carousel-slide'));
-    });
-  });
-
-  document.querySelectorAll('.browser-visit').forEach(link => {
+  document.querySelectorAll('.browser-visit, .browser-snapshot-link').forEach(link => {
     link.addEventListener('click', (event) => {
       event.stopPropagation();
     });
@@ -1492,63 +1735,16 @@
 
   positionSlides();
 
-  // ─── Iframe overlay + scroll lock ───
-  document.querySelectorAll('.iframe-overlay').forEach(overlay => {
-    overlay.addEventListener('click', (e) => {
-      const slide = overlay.closest('.carousel-slide');
-      if (!slide.classList.contains('active')) return;
-      e.stopPropagation();
-      if (slide.dataset.index === '0') stopMedia(slide);
-      setExploringState(slide, true);
-    });
-  });
-
-  document.querySelectorAll('.browser-viewport').forEach(vp => {
-    vp.addEventListener('mouseenter', () => {
-      const slide = vp.closest('.carousel-slide');
-      if (slide && slide.classList.contains('active') && vp.classList.contains('exploring')) {
-        document.body.style.overflow = 'hidden';
-      }
-    });
-    vp.addEventListener('mouseleave', () => {
-      document.body.style.overflow = '';
-    });
-    vp.addEventListener('wheel', (e) => {
-      if (vp.classList.contains('exploring')) {
-        e.preventDefault();
-      }
-    }, { passive: false });
-  });
-
-  function exitExploring() {
-    document.querySelectorAll('.browser-frame.is-exploring').forEach(frame => {
-      setExploringState(frame.closest('.carousel-slide'), false);
-    });
-    document.body.style.overflow = '';
-  }
-
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.browser-viewport') && !e.target.closest('.browser-bar')) exitExploring();
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') exitExploring();
-  });
-
-  // ─── Stop media when carousel leaves viewport ───
-  const carouselEl = document.getElementById('portfolioCarousel');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) {
-        exitExploring();
-      }
-    });
-  }, { threshold: 0.1 });
-  observer.observe(carouselEl);
-
   // ─── Form submission ───
-  document.getElementById('questionnaire').addEventListener('submit', function(e) {
+  document.getElementById('questionnaire').addEventListener('submit', async function(e) {
     e.preventDefault();
+
+    setFormError();
+    if (!turnstileToken) {
+      await ensureTurnstile().catch(() => {});
+      setFormError('Please complete the secure verification before submitting.');
+      return;
+    }
 
     const formData = new FormData(this);
     const data = {};
@@ -1559,15 +1755,40 @@
         data[key] = val;
       }
     });
+    data.turnstileToken = turnstileToken;
 
-    console.log('Form submission:', data);
+    const submitButton = document.getElementById('submitInquiryButton');
+    const originalLabel = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending…';
 
-    // TODO: Replace with actual endpoint (email service, Formspree, Netlify Forms, etc.)
-    // Example: fetch('https://formspree.io/f/YOUR_ID', { method: 'POST', body: formData });
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) {
+        throw new Error(result.message || 'Your request could not be sent. Please try again.');
+      }
 
-    this.style.display = 'none';
-    document.getElementById('formProgress').style.display = 'none';
-    document.getElementById('formSuccess').style.display = 'block';
+      this.style.display = 'none';
+      document.getElementById('formProgress').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    } catch (error) {
+      setFormError(error.message);
+      turnstileToken = '';
+      turnstileStatus.classList.remove('verified');
+      turnstileStatus.textContent = 'Please verify again before resubmitting.';
+      if (window.turnstile && turnstileWidgetId !== null) window.turnstile.reset(turnstileWidgetId);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalLabel;
+    }
   });
 </script>
 

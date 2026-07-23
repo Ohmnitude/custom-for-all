@@ -1,0 +1,18 @@
+{
+  "name": "custom-for-all",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "check": "node --check server.mjs && node --check scripts/list-inquiries.mjs",
+    "inquiries": "node scripts/list-inquiries.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "nodemailer": "^9.0.3"
+  }
+}

@@ -1,0 +1,15 @@
+FROM node:24-alpine@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432d679c54fbfd
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts \
+    && npm cache clean --force
+
+COPY server.mjs ./
+
+USER 10001:10001
+EXPOSE 8787
+
+CMD ["node", "server.mjs"]
