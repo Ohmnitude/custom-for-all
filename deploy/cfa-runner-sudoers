@@ -1,0 +1,3 @@
+Defaults:cfa-runner !setenv
+cfa-runner ALL=(root) NOPASSWD: /usr/local/sbin/deploy-custom-for-all *
+

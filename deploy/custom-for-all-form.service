@@ -6,10 +6,10 @@ Requires=docker.service cfa-form-firewall.service
 
 [Service]
 Type=oneshot
-WorkingDirectory=/srv/client-services/custom-for-all-form/current
+WorkingDirectory=/etc/custom-for-all
 Environment=CFA_FORM_ENV_FILE=/etc/custom-for-all/form.env
-ExecStart=/usr/bin/docker compose up -d --remove-orphans
-ExecStop=/usr/bin/docker compose down
+ExecStart=/usr/bin/docker compose -p custom-for-all-form -f /etc/custom-for-all/compose.yaml up -d --remove-orphans
+ExecStop=/usr/bin/docker compose -p custom-for-all-form -f /etc/custom-for-all/compose.yaml down
 RemainAfterExit=yes
 TimeoutStartSec=180
 TimeoutStopSec=60

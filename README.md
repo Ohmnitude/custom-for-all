@@ -44,3 +44,13 @@ The form service is designed to run in the dedicated container defined in `compo
 The container must never mount the Docker socket, Psychurch directories, server credentials, or another application's network. Its dedicated subnet is `172.30.250.0/28`, which does not overlap the Node VPS's existing Docker networks.
 
 Install `deploy/firewall-isolation.sh` and the two systemd units in `deploy/` before enabling the production container. The firewall service rejects traffic from `172.30.250.0/28` to the server's public IP, `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, and `169.254.0.0/16`. The form service starts only after that firewall is active. This blocks the form service from reaching Psychurch services, other containers, private networks, and the provider metadata network while retaining the public HTTPS and SMTP egress needed for Turnstile and email delivery.
+
+## Automatic deployment
+
+Pushes to `main` run `.github/workflows/deploy.yml` on the repository's dedicated Node VPS runner. The runner is an unprivileged user and can only invoke the root-owned `/usr/local/sbin/deploy-custom-for-all` command with a full Git commit ID.
+
+The server fetches that exact public commit directly from GitHub. Static files are installed as a new release and activated with an atomic symlink. Backend source changes are built with a separately installed, root-owned Dockerfile, and the service uses a root-owned copy of `deploy/compose.production.yaml` from `/etc/custom-for-all`. Repository changes therefore cannot weaken the container configuration. The form container must become healthy before the public release is switched. A failed backend deployment restores the previous image and release.
+
+`deploy/server-deploy.sh` is the reviewed source for the server command. Editing it in Git does not alter the installed root-owned copy; server-side deployment logic must be reviewed and installed separately.
+
+The runner service hardening is tracked in `deploy/cfa-runner-service.conf`. It makes the operating system read-only to the runner except for its own work directory and this site's release directories. It also blocks the runner from the VPS itself, private networks, and provider metadata while retaining the local DNS stub and public GitHub access. `deploy/cfa-runner-sudoers` limits privilege escalation to the fixed deployment command.

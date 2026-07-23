@@ -1,0 +1,36 @@
+name: Deploy production
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: custom-for-all-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy cfa.ohmnitude.net
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
+      - custom-for-all
+    timeout-minutes: 15
+
+    steps:
+      - name: Confirm runner cannot reach VPS services
+        run: |
+          for url in http://127.0.0.1:8787/api/health http://10.0.0.4:3002; do
+            if curl --silent --show-error --max-time 2 --output /dev/null "$url"; then
+              echo "Runner isolation failed: $url was reachable." >&2
+              exit 1
+            fi
+          done
+
+      - name: Deploy committed revision
+        run: sudo /usr/local/sbin/deploy-custom-for-all "$GITHUB_SHA"
